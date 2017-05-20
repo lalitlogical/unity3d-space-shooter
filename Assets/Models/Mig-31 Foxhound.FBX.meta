@@ -1,0 +1,195 @@
+fileFormatVersion: 2
+guid: cb5439a7e744242ccaabc904299dc8ff
+timeCreated: 1494994215
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: AileronL01
+    100002: AileronR01
+    100004: Canopy01
+    100006: Canopy02
+    100008: Eject_Seat01
+    100010: Eject_Seat02
+    100012: ElevatorL01
+    100014: ElevatorR01
+    100016: EngineL01
+    100018: EngineR01
+    100020: FlapL01
+    100022: FlapR01
+    100024: Glass
+    100026: Glass_Canopy01
+    100028: Glass_Canopy02
+    100030: Glass_HUD
+    100032: IntakeL01
+    100034: IntakeR01
+    100036: LOD0
+    100038: //RootNode
+    100040: Pilot01
+    100042: Pilot02
+    100044: RudderL01
+    100046: RudderR01
+    400000: AileronL01
+    400002: AileronR01
+    400004: Canopy01
+    400006: Canopy02
+    400008: Eject_Seat01
+    400010: Eject_Seat02
+    400012: ElevatorL01
+    400014: ElevatorR01
+    400016: EngineL01
+    400018: EngineR01
+    400020: FlapL01
+    400022: FlapR01
+    400024: Glass
+    400026: Glass_Canopy01
+    400028: Glass_Canopy02
+    400030: Glass_HUD
+    400032: IntakeL01
+    400034: IntakeR01
+    400036: LOD0
+    400038: //RootNode
+    400040: Pilot01
+    400042: Pilot02
+    400044: RudderL01
+    400046: RudderR01
+    2300000: AileronL01
+    2300002: AileronR01
+    2300004: Canopy01
+    2300006: Canopy02
+    2300008: Eject_Seat01
+    2300010: Eject_Seat02
+    2300012: ElevatorL01
+    2300014: ElevatorR01
+    2300016: EngineL01
+    2300018: EngineR01
+    2300020: FlapL01
+    2300022: FlapR01
+    2300024: Glass
+    2300026: Glass_Canopy01
+    2300028: Glass_Canopy02
+    2300030: Glass_HUD
+    2300032: IntakeL01
+    2300034: IntakeR01
+    2300036: LOD0
+    2300038: Pilot01
+    2300040: Pilot02
+    2300042: RudderL01
+    2300044: RudderR01
+    3300000: AileronL01
+    3300002: AileronR01
+    3300004: Canopy01
+    3300006: Canopy02
+    3300008: Eject_Seat01
+    3300010: Eject_Seat02
+    3300012: ElevatorL01
+    3300014: ElevatorR01
+    3300016: EngineL01
+    3300018: EngineR01
+    3300020: FlapL01
+    3300022: FlapR01
+    3300024: Glass
+    3300026: Glass_Canopy01
+    3300028: Glass_Canopy02
+    3300030: Glass_HUD
+    3300032: IntakeL01
+    3300034: IntakeR01
+    3300036: LOD0
+    3300038: Pilot01
+    3300040: Pilot02
+    3300042: RudderL01
+    3300044: RudderR01
+    4300000: LOD0
+    4300002: Eject_Seat01
+    4300004: Pilot01
+    4300006: Eject_Seat02
+    4300008: Pilot02
+    4300010: Glass
+    4300012: EngineL01
+    4300014: EngineR01
+    4300016: Glass_HUD
+    4300018: Canopy01
+    4300020: Glass_Canopy01
+    4300022: Canopy02
+    4300024: Glass_Canopy02
+    4300026: AileronL01
+    4300028: ElevatorL01
+    4300030: FlapL01
+    4300032: AileronR01
+    4300034: FlapR01
+    4300036: ElevatorR01
+    4300038: IntakeL01
+    4300040: IntakeR01
+    4300042: RudderR01
+    4300044: RudderL01
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 1
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.01
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
