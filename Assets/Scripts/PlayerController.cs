@@ -19,16 +19,12 @@ public class PlayerController : MonoBehaviour {
 	public GameObject[] shotspawns2;
 	public GameObject[] shotspawns3;
 	public Transform shotspawn1;
-
 	public float fireDelta = 0.5F;
 
 	private float nextFire = 0.5F;
 	private float myTime = 0.0F;
-
 	private AudioSource audioSource ;
-
 	private Vector3 dirInit = Vector3.zero;
-
 	private int childMode;
 
 	void Start () {
@@ -73,7 +69,10 @@ public class PlayerController : MonoBehaviour {
 
 			nextFire = nextFire - myTime;
 			myTime = 0.0F;
-			audioSource.Play ();
+			int mode = PlayerPrefs.GetInt ("PlayerMusic");
+			if (mode == 1) {
+				audioSource.Play ();	
+			}
 		}
 	}
 

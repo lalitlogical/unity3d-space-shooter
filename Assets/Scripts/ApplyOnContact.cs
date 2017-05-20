@@ -33,7 +33,6 @@ public class ApplyOnContact : MonoBehaviour {
 				if (isShieldPresent != null) {
 					Destroy (isShieldPresent);
 				}
-				Debug.Log ("Activate Shield ....");
 				GameObject shieldObject = Instantiate (shield, other.gameObject.transform.position, other.gameObject.transform.rotation) as GameObject;	
 				shieldObject.transform.parent = other.gameObject.transform;
 			}

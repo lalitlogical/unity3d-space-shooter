@@ -26,12 +26,14 @@ public class DestroyByContact : MonoBehaviour {
 		}
 
 		if (other.gameObject.CompareTag ("Shield")	) {
-			Instantiate (explosion, transform.position, transform.rotation);
+			HandleExplosionWithSound (explosion, transform);
+//			Instantiate (explosion, transform.position, transform.rotation);
 			Destroy (gameObject);
 
 			shieldController = other.gameObject.GetComponent <ShieldController> ();
 			if (shieldController.countUntillDestroy == 0) {
-				Instantiate (playerExplosion, other.transform.position, other.transform.rotation);	
+				HandleExplosionWithSound (playerExplosion, other.transform);
+//				Instantiate (playerExplosion, other.transform.position, other.transform.rotation);	
 				Destroy (other.gameObject);
 			} else {
 				shieldController.countUntillDestroy -= 1;
@@ -46,15 +48,27 @@ public class DestroyByContact : MonoBehaviour {
 				}
 			}
 		}
-
-		Instantiate (explosion, transform.position, transform.rotation);
+			
+//		Instantiate (explosion, transform.position, transform.rotation);
+		HandleExplosionWithSound (explosion, transform);
 		if (other.gameObject.CompareTag ("Player")) {
-			Instantiate (playerExplosion, other.transform.position, other.transform.rotation);	
+			HandleExplosionWithSound(playerExplosion, other.transform);
+//			Instantiate (playerExplosion, other.transform.position, other.transform.rotation);	
 			gameController.GameOver ();
 		} else {
 			gameController.AddScore (scoreValue);	
 		}
 		Destroy (other.gameObject);
 		Destroy (gameObject);
+	}
+
+	void HandleExplosionWithSound (GameObject explosion, Transform transform) {
+		GameObject explosionObject = Instantiate (explosion, transform.position, transform.rotation) as GameObject;
+		int mode = PlayerPrefs.GetInt ("OtherMusic");
+		Debug.Log ("OtherMusic : " + mode);
+		if (mode == 1) {
+			AudioSource audioSource = explosionObject.GetComponent<AudioSource> ();
+			audioSource.Play ();
+		}
 	}
 }

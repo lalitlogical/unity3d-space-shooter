@@ -11,23 +11,26 @@ public class GameController : MonoBehaviour {
 	public GameObject shieldActivator;
 	public GameObject player;
 	public Vector3 spawnValue;
+
 	public int hazardCount;
 	public float spawnWait;
 	public float startWait;
 	public float waveWait;
 	public int activateBullet = 100;
-
 	public Text scoreText; 
 
 	private bool gameOver;
 	private int score;
 	private int upgradeBullet = 0;
 
-	public GameObject menuPanel;
+	public GameObject gameOverPanel;
+	public GameObject gamePausePanel;
+	public GameObject pauseButton;
 
 	private Mover mover;
 	private bool activateBulletActivator = true;
 	private bool activateShieldActivator = true;
+	private bool isPaused = false;
 
 	void Start () {
 		gameOver = false;
@@ -38,8 +41,9 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.Escape)) 
-			SceneManager.LoadScene ("Home");
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			PauseTheGame ();
+		}
 	}
 
 	IEnumerator SpanWaves () {
@@ -123,8 +127,10 @@ public class GameController : MonoBehaviour {
 
 	public void GameOver () {
 		gameOver = true;
-		PlayerPrefs.SetInt ("BulletCount", 1);	
-		menuPanel.SetActive (true);
+		pauseButton.SetActive (false);
+		gameOverPanel.SetActive (true);
+		gamePausePanel.SetActive (false);
+		PlayerPrefs.SetInt ("BulletCount", 1);
 	}
 
 	public void UpgradeWeapon () {
@@ -134,10 +140,25 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void ReStartGame () {
+		if (isPaused) {
+			Time.timeScale = 1;
+		}
 		SceneManager.LoadScene ("Game");
 	}
 
 	public void BackFromGame () {
+		Time.timeScale = 1;
 		SceneManager.LoadScene ("Home");
+	}
+
+	public void PauseTheGame () {
+		pauseButton.SetActive (isPaused);
+		isPaused = !isPaused;
+		if (isPaused) {
+			Time.timeScale = 0;
+		} else {
+			Time.timeScale = 1;
+		}
+		gamePausePanel.SetActive (isPaused);
 	}
 }
