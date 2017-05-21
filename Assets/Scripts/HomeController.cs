@@ -11,7 +11,7 @@ public class HomeController : MonoBehaviour {
 	void Start() {
 		if (highestScore != null) {
 			int bestScore = PlayerPrefs.GetInt ("BestScore");
-			highestScore.text = "Highest Score: " + bestScore;
+			highestScore.text = "Best Score : " + bestScore;
 		}
 	}
 

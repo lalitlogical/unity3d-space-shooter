@@ -18,6 +18,8 @@ public class GameController : MonoBehaviour {
 	public float waveWait;
 	public int activateBullet = 100;
 	public Text scoreText; 
+	public Text yourScoreText; 
+	public Text highestScoreText;
 
 	private bool gameOver;
 	private int score;
@@ -28,9 +30,12 @@ public class GameController : MonoBehaviour {
 	public GameObject pauseButton;
 
 	private Mover mover;
+	private int  bulletActiveIndex = 0;
 	private bool activateBulletActivator = true;
+	private int  shieldActiveIndex = 0;
 	private bool activateShieldActivator = true;
 	private bool isPaused = false;
+	private int childMode;
 
 	void Start () {
 		gameOver = false;
@@ -38,6 +43,7 @@ public class GameController : MonoBehaviour {
 		UpdateScore ();
 		StartCoroutine (SpanWaves ());
 		PlayerPrefs.SetInt ("BulletCount", 1);	
+		childMode = PlayerPrefs.GetInt ("ChildMode");
 	}
 
 	void Update () {
@@ -49,17 +55,22 @@ public class GameController : MonoBehaviour {
 	IEnumerator SpanWaves () {
 		yield return new WaitForSeconds (startWait);
 		while(true) {
-			activateBulletActivator = activateShieldActivator = true;
-			int bulletCount = PlayerPrefs.GetInt ("BulletCount");				 
-			for (int i = 0; i < hazardCount * bulletCount; i++) {
-				if (gameOver) {
-					break;
-				}
+			int bulletCount  = PlayerPrefs.GetInt ("BulletCount");		
+			int totalCount = hazardCount * bulletCount;
+			if (!activateBulletActivator && shieldActiveIndex >= totalCount)
+				activateBulletActivator = true;
+			
+			if (!activateShieldActivator && shieldActiveIndex >= totalCount)
+				activateShieldActivator = true;
+
+			for (int i = 0; i < totalCount; i++) {
+				if (gameOver) break;
 
 				if (activateBulletActivator && bulletCount < 3 && upgradeBullet == Random.Range (0, 10)) {	
 					if (score > bulletCount * activateBullet) {
 						ObjectActivator (bulletActivator);
 						activateBulletActivator = false;
+						bulletActiveIndex = 0;
 					} else {
 						GenerateHazard (bulletCount);
 					}
@@ -68,12 +79,19 @@ public class GameController : MonoBehaviour {
 					if (isShieldPresent == null) {
 						ObjectActivator (shieldActivator);
 						activateShieldActivator = false;
+						shieldActiveIndex = 0;
 					} else {
 						GenerateHazard (bulletCount);
 					}
 				} else {
 					GenerateHazard (bulletCount);
 				}
+
+				if (!activateBulletActivator)
+					bulletActiveIndex++;
+				
+				if (!activateShieldActivator)
+					shieldActiveIndex++;
 				yield return new WaitForSeconds (spawnWait / bulletCount);
 			}
 
@@ -112,10 +130,6 @@ public class GameController : MonoBehaviour {
 
 	public void AddScore (int newScoreValue) {
 		score += newScoreValue;
-		int bestScore = PlayerPrefs.GetInt ("BestScore");
-		if (score > bestScore) {
-			PlayerPrefs.SetInt ("BestScore", score);	
-		}
 		UpdateScore ();
 	}
 
@@ -127,10 +141,22 @@ public class GameController : MonoBehaviour {
 
 	public void GameOver () {
 		gameOver = true;
+
 		pauseButton.SetActive (false);
 		gameOverPanel.SetActive (true);
 		gamePausePanel.SetActive (false);
 		PlayerPrefs.SetInt ("BulletCount", 1);
+
+		int bestScore = PlayerPrefs.GetInt ("BestScore");
+		if (score > bestScore) {
+			bestScore = score;
+			if (childMode == 0)
+				PlayerPrefs.SetInt ("BestScore", score);	
+		}
+
+		scoreText.text = "";
+		yourScoreText.text = "Your Score - " + score;
+		highestScoreText.text = "Best score - " + bestScore;
 	}
 
 	public void UpgradeWeapon () {
