@@ -18,6 +18,9 @@ public class PlayerController : MonoBehaviour {
 	public GameObject[] shots;
 	public GameObject[] shotspawns2;
 	public GameObject[] shotspawns3;
+	public GameObject cleaner;
+	public GameObject cleanerButton;
+
 	public Transform shotspawn1;
 	public float fireDelta = 0.5F;
 
@@ -25,7 +28,7 @@ public class PlayerController : MonoBehaviour {
 	private float myTime = 0.0F;
 	private AudioSource audioSource ;
 	private Vector3 dirInit = Vector3.zero;
-	private int childMode;
+	private string GameMode;
 	private int stickToXAxis;
 
 	void Start () {
@@ -35,7 +38,7 @@ public class PlayerController : MonoBehaviour {
 		dirInit.z = Input.acceleration.z;
 		dirInit.x = Input.acceleration.x;
 
-		childMode = PlayerPrefs.GetInt ("ChildMode");
+		GameMode = PlayerPrefs.GetString ("GameMode");
 		stickToXAxis = PlayerPrefs.GetInt ("StickToXAxis");
 	}
 
@@ -51,7 +54,7 @@ public class PlayerController : MonoBehaviour {
 		if (Application.platform == RuntimePlatform.Android) {
 			movement = Vector3.zero;
 			movement.x = Input.acceleration.x - dirInit.x;
-			if (childMode == 0 && stickToXAxis == 0) {
+			if (GameMode != "ChildMode" && stickToXAxis == 0) {
 				movement.z = - (Input.acceleration.z - dirInit.z);
 			}
 			rb.velocity = movement * speed * 2;
@@ -59,7 +62,7 @@ public class PlayerController : MonoBehaviour {
 			float moveHorizontal = Input.GetAxis ("Horizontal");
 			float moveVertical = Input.GetAxis ("Vertical");
 
-			if (childMode == 1 || stickToXAxis == 1) {
+			if (GameMode == "ChildMode" || stickToXAxis == 1) {
 				movement = new Vector3 (moveHorizontal, 0.0f, 0.0f);
 			} else {
 				movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
@@ -82,7 +85,12 @@ public class PlayerController : MonoBehaviour {
 		if (myTime > nextFire)
 		{
 			nextFire = myTime + fireDelta;
-			if (childMode == 0) {
+			if (GameMode == "ChildMode") {
+				for (int i = 0; i < shotspawns3.Length; i++) {
+					Transform shotspawn = shotspawns3 [i].transform;
+					Instantiate (shots [1], shotspawn.position, shotspawn.rotation); 
+				}
+			} else {
 				int bulletCount = PlayerPrefs.GetInt ("BulletCount");
 				if (bulletCount <= 1) {
 					Instantiate (shots[0], shotspawn1.position, shotspawn1.rotation); 
@@ -97,21 +105,19 @@ public class PlayerController : MonoBehaviour {
 						Instantiate (shots[1], shotspawn.position, shotspawn.rotation); 
 					}
 				}
-			} else {
-				for (int i = 0; i < shotspawns3.Length; i++) {
-					Transform shotspawn = shotspawns3 [i].transform;
-					Instantiate (shots[1], shotspawn.position, shotspawn.rotation); 
-				}
 			}
-
-			// create code here that animates the newProjectile
 
 			nextFire = nextFire - myTime;
 			myTime = 0.0F;
 			int mode = PlayerPrefs.GetInt ("PlayerMusic");
-			if (mode == 1) {
-				audioSource.Play ();	
-			}
+			if (mode == 1) audioSource.Play ();
 		}
+	}
+
+	public void FireCleaner () {
+		Vector3 cVector = Vector3.zero;
+		cVector.z = shotspawn1.position.z;
+		Instantiate (cleaner, cVector, shotspawn1.rotation); 
+		cleanerButton.SetActive (false);
 	}
 }

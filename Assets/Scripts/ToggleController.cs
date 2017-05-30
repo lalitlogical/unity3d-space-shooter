@@ -11,24 +11,34 @@ public class ToggleController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		toggleButton = gameObject.GetComponent <Toggle> ();
-		int mode = PlayerPrefs.GetInt (gameObject.tag);
-		if (mode == 1) {
-			toggleButton.isOn = true;
+		if (gameObject.tag == "ChildMode" || gameObject.tag == "NormalMode" || gameObject.tag == "ExpertMode") {
+			if (PlayerPrefs.GetString ("GameMode") == gameObject.tag) {
+				toggleButton.isOn = true;
+			}
 		} else {
-			toggleButton.isOn = false;
+			int mode = PlayerPrefs.GetInt (gameObject.tag);
+			if (mode == 1) {
+				toggleButton.isOn = true;
+			} else {
+				toggleButton.isOn = false;
+			}	
 		}
-
 	}
 	
 	// Update is called once per frame
 	public void ApplyToggle () {
-		if (toggleButton.isOn) {
-			PlayerPrefs.SetInt(gameObject.tag, 1);
+		Debug.Log (gameObject.tag);
+		if (gameObject.tag == "ChildMode" || gameObject.tag == "NormalMode" || gameObject.tag == "ExpertMode") {
+			PlayerPrefs.SetString("GameMode", gameObject.tag);
 		} else {
-			PlayerPrefs.SetInt(gameObject.tag, 0);
-		}
-		if (gameObject.CompareTag ("BackgroundMusic")) {
-			HandleMusic (toggleButton.isOn);
+			if (toggleButton.isOn) {
+				PlayerPrefs.SetInt(gameObject.tag, 1);
+			} else {
+				PlayerPrefs.SetInt(gameObject.tag, 0);
+			}	
+			if (gameObject.CompareTag ("BackgroundMusic")) {
+				HandleMusic (toggleButton.isOn);
+			}
 		}
 	}
 

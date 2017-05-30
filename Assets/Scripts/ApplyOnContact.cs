@@ -25,7 +25,10 @@ public class ApplyOnContact : MonoBehaviour {
 		}
 
 		if (other.gameObject.CompareTag ("Player") && gameController != null) {
-			if (gameObject.CompareTag ("BulletActivator")) {
+			if (gameObject.CompareTag ("CleanerActivator")) {
+				gameController.ActivateCleaner ();
+				gameController.AddScore (scoreValue);
+			} else if (gameObject.CompareTag ("BulletActivator")) {
 				gameController.UpgradeWeapon ();
 				gameController.AddScore (scoreValue);
 			} else if (gameObject.CompareTag ("ShieldActivator")) {
@@ -35,6 +38,7 @@ public class ApplyOnContact : MonoBehaviour {
 				}
 				GameObject shieldObject = Instantiate (shield, other.gameObject.transform.position, other.gameObject.transform.rotation) as GameObject;	
 				shieldObject.transform.parent = other.gameObject.transform;
+//				gameController.DrawProgressBar ();
 			}
 			Destroy (gameObject);
 		}

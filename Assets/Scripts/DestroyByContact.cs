@@ -7,11 +7,14 @@ public class DestroyByContact : MonoBehaviour {
 	public GameObject explosion;
 	public GameObject playerExplosion;
 	public int scoreValue;
+	public int destroyValue;
 
+	private string GameMode;
 	private GameController gameController;
 	private ShieldController shieldController;
 
 	void Start () {
+		GameMode = PlayerPrefs.GetString ("GameMode");
 		GameObject gameControllerObject = GameObject.FindWithTag ("GameController");
 		if (gameControllerObject != null) {
 			gameController = gameControllerObject.GetComponent <GameController> ();
@@ -21,7 +24,7 @@ public class DestroyByContact : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.CompareTag ("Boundary") || other.gameObject.CompareTag ("BulletActivator") || other.gameObject.CompareTag ("ShieldActivator")) {
+		if (other.gameObject.CompareTag ("Boundary") || other.gameObject.CompareTag ("BulletActivator") || other.gameObject.CompareTag ("ShieldActivator") || other.gameObject.CompareTag ("CleanerActivator")) {
 			return;
 		}
 
@@ -46,22 +49,33 @@ public class DestroyByContact : MonoBehaviour {
 				}
 			}
 		}
-			
-		HandleExplosionWithSound (explosion, transform);
+
+		if (GameMode == "ExpertMode" && other.gameObject.CompareTag ("Bolt")) {
+			destroyValue -= 1;
+			if (destroyValue > 0) {
+				Destroy (other.gameObject);
+				return;
+			}
+		}
+
 		if (other.gameObject.CompareTag ("Player")) {
 			HandleExplosionWithSound(playerExplosion, other.transform);
 			gameController.GameOver ();
 		} else {
 			gameController.AddScore (scoreValue);	
 		}
-		Destroy (other.gameObject);
+
+		if (!other.gameObject.CompareTag ("Cleaner")) {
+			Destroy (other.gameObject);	
+		}
+
+		HandleExplosionWithSound (explosion, transform);
 		Destroy (gameObject);
 	}
 
 	void HandleExplosionWithSound (GameObject explosion, Transform transform) {
 		GameObject explosionObject = Instantiate (explosion, transform.position, transform.rotation) as GameObject;
-		int mode = PlayerPrefs.GetInt ("OtherMusic");
-		if (mode == 1) {
+		if (PlayerPrefs.GetInt ("OtherMusic") == 1) {
 			AudioSource audioSource = explosionObject.GetComponent<AudioSource> ();
 			audioSource.Play ();
 		}

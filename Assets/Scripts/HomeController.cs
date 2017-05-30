@@ -13,6 +13,10 @@ public class HomeController : MonoBehaviour {
 			int bestScore = PlayerPrefs.GetInt ("BestScore");
 			highestScore.text = "Best Score : " + bestScore;
 		}
+
+		if (PlayerPrefs.GetString ("GameMode") == "") {
+			PlayerPrefs.SetString ("GameMode", "NormalMode");
+		}
 	}
 
 	public void StartGame () {

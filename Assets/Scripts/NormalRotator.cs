@@ -13,9 +13,4 @@ public class NormalRotator : MonoBehaviour {
 		rb.angularVelocity = Random.insideUnitSphere * tumble;
 	}
 
-	void Update () {
-//		rb.gameObject.
-//		transform.Rotate(Vector3.right * Time.deltaTime);
-//		transform.Rotate(Vector3.up * Time.deltaTime, Space.World);
-	}
 }

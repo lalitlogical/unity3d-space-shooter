@@ -9,7 +9,11 @@ public class GameController : MonoBehaviour {
 	public GameObject[] hazards;
 	public GameObject bulletActivator;
 	public GameObject shieldActivator;
+	public GameObject cleanerActivator;
+	public GameObject cleanerButton;
+
 	public GameObject player;
+	public GameObject cleaner;
 	public Vector3 spawnValue;
 
 	public int hazardCount;
@@ -34,23 +38,58 @@ public class GameController : MonoBehaviour {
 	private bool activateBulletActivator = true;
 	private int  shieldActiveIndex = 0;
 	private bool activateShieldActivator = true;
+	private int  cleanerActiveIndex = 0;
+	private bool activateCleanerActivator = true;
+
 	private bool isPaused = false;
-	private int childMode;
+	private string GameMode;
+
+	public float barDisplay; //current progress
+	public Vector2 pos = new Vector2(20,40);
+	public Vector2 size = new Vector2(60,20);
+	public Texture2D emptyTex;
+	public Texture2D fullTex;
+
+	public float speedIncreaser = -0.0001f;
+	private float updateSpeedBy = 0.0f;
 
 	void Start () {
-		gameOver = false;
 		score = 0;
+		gameOver = false;
 		UpdateScore ();
 		StartCoroutine (SpanWaves ());
 		PlayerPrefs.SetInt ("BulletCount", 1);	
-		childMode = PlayerPrefs.GetInt ("ChildMode");
+		GameMode = PlayerPrefs.GetString ("GameMode");
 	}
 
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			PauseTheGame ();
 		}
+		if (!gameOver) {
+			if (GameMode == "NormalMode") {
+				updateSpeedBy += speedIncreaser;
+			} else if (GameMode == "ExpertMode") {
+				updateSpeedBy += speedIncreaser * 10;
+			}	
+		}
 	}
+
+	void OnGUI() {
+		
+	}
+
+//	public void DrawProgressBar () {
+//		//draw the background:
+//		GUI.BeginGroup(new Rect(pos.x, pos.y, size.x, size.y));
+//		GUI.Box(new Rect(0,0, size.x, size.y), emptyTex);
+//
+//		//draw the filled-in part:
+//		GUI.BeginGroup(new Rect(0,0, size.x * barDisplay, size.y));
+//		GUI.Box(new Rect(0,0, size.x, size.y), fullTex);
+//		GUI.EndGroup();
+//		GUI.EndGroup();
+//	}
 
 	IEnumerator SpanWaves () {
 		yield return new WaitForSeconds (startWait);
@@ -63,6 +102,9 @@ public class GameController : MonoBehaviour {
 			if (!activateShieldActivator && shieldActiveIndex >= totalCount)
 				activateShieldActivator = true;
 
+			if (!activateCleanerActivator && cleanerActiveIndex >= totalCount)
+				activateCleanerActivator = true;
+
 			for (int i = 0; i < totalCount; i++) {
 				if (gameOver) break;
 
@@ -74,12 +116,21 @@ public class GameController : MonoBehaviour {
 					} else {
 						GenerateHazard (bulletCount);
 					}
-				} else if (activateShieldActivator && 5 == Random.Range (0, 10)) {
+				} else if (activateShieldActivator && Random.Range (0, 20) == Random.Range (0, 20)) {
 					GameObject isShieldPresent = GameObject.FindWithTag ("Shield");
 					if (isShieldPresent == null) {
 						ObjectActivator (shieldActivator);
 						activateShieldActivator = false;
 						shieldActiveIndex = 0;
+					} else {
+						GenerateHazard (bulletCount);
+					}
+				} else if (activateCleanerActivator && Random.Range (0, 20) == Random.Range (0, 20)) {
+					GameObject isCleanerPresent = GameObject.FindWithTag ("Cleaner");
+					if (isCleanerPresent == null) {
+						ObjectActivator (cleanerActivator);
+						activateCleanerActivator = false;
+						cleanerActiveIndex = 0;
 					} else {
 						GenerateHazard (bulletCount);
 					}
@@ -92,20 +143,18 @@ public class GameController : MonoBehaviour {
 				
 				if (!activateShieldActivator)
 					shieldActiveIndex++;
+
+				if (!activateCleanerActivator)
+					cleanerActiveIndex++;
+				
 				yield return new WaitForSeconds (spawnWait / bulletCount);
 			}
 
-
 			upgradeBullet++;
-			if (upgradeBullet >= 10) {
-				upgradeBullet = 0;
-			}
+			if (upgradeBullet >= 10) upgradeBullet = 0;
 
 			yield return new WaitForSeconds (waveWait / bulletCount);
-
-			if (gameOver) {
-				break;
-			}
+			if (gameOver) break;
 		}
 	}
 
@@ -114,11 +163,9 @@ public class GameController : MonoBehaviour {
 		Vector3 spawnPosition = new Vector3 (Random.Range (-spawnValue.x, spawnValue.x), spawnValue.y, spawnValue.z);
 		Quaternion spawnRotation = Quaternion.identity;
 		GameObject hazardObject = Instantiate (hazard, spawnPosition, spawnRotation) as GameObject;	
-		if (bulletCount > 1) {
+		if (hazardObject != null) {
 			mover = hazardObject.GetComponent <Mover> (); 
-			if (mover != null) {
-				mover.speed = mover.speed - bulletCount;
-			}	
+			if (mover != null) mover.speed = mover.speed + updateSpeedBy;
 		}
 	}
 
@@ -134,9 +181,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	void UpdateScore () {
-		if (scoreText != null) {
-			scoreText.text = "Score: " + score;	
-		}
+		if (scoreText != null) scoreText.text = "Score: " + score;
 	}
 
 	public void GameOver () {
@@ -150,8 +195,7 @@ public class GameController : MonoBehaviour {
 		int bestScore = PlayerPrefs.GetInt ("BestScore");
 		if (score > bestScore) {
 			bestScore = score;
-			if (childMode == 0)
-				PlayerPrefs.SetInt ("BestScore", score);	
+			if (GameMode != "ChildMode") PlayerPrefs.SetInt ("BestScore", score);	
 		}
 
 		scoreText.text = "";
@@ -165,10 +209,15 @@ public class GameController : MonoBehaviour {
 		PlayerPrefs.SetInt ("BulletCount", bulletCount);	
 	}
 
+	public void ActivateCleaner () {
+		cleanerButton.SetActive (true);
+	}
+
 	public void ReStartGame () {
 		if (isPaused) {
 			Time.timeScale = 1;
 		}
+		updateSpeedBy = 0.0f;
 		SceneManager.LoadScene ("Game");
 	}
 

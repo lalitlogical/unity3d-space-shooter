@@ -17,8 +17,8 @@ public class DestroyByTouch : MonoBehaviour {
 
 
 	void OnMouseDown () {
-		int childMode = PlayerPrefs.GetInt ("ChildMode");
-		if (childMode == 1) {
+		string GameMode = PlayerPrefs.GetString ("GameMode");
+		if (GameMode == "ChildMode") {
 			DestroyByContact destroyByContact = gameObject.GetComponent<DestroyByContact> ();
 			gameController.AddScore (destroyByContact.scoreValue);	
 			Destroy (gameObject);
