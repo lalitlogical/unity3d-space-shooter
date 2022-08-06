@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour {
 	private Vector3 dirInit = Vector3.zero;
 	private string GameMode;
 	private int stickToXAxis;
+	private Touch touch;
 
 	void Start () {
 		rb = GetComponent<Rigidbody> ();
@@ -50,14 +51,35 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
-		Vector3 movement;
+		Vector3 movement = Vector3.zero;
 		if (Application.platform == RuntimePlatform.Android) {
-			movement = Vector3.zero;
-			movement.x = Input.acceleration.x - dirInit.x;
-			if (GameMode != "ChildMode" && stickToXAxis == 0) {
-				movement.z = - (Input.acceleration.z - dirInit.z);
+			if (Input.touchCount > 0) {
+				touch = Input.GetTouch (0);
+				if (touch.phase == TouchPhase.Moved) {
+					movement.x = touch.deltaPosition.x;
+					movement.z = touch.deltaPosition.y;
+					rb.velocity = movement;
+					rb.position = new Vector3 
+						(
+							Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
+							0.0f, 
+							Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
+						);
+				}
+			} else {
+				movement.x = Input.acceleration.x - dirInit.x;
+				if (GameMode != "ChildMode" && stickToXAxis == 0) {
+					movement.z = - (Input.acceleration.z - dirInit.z);
+				}
+
+				rb.velocity = movement * speed;
+				rb.position = new Vector3 
+					(
+						Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
+						0.0f, 
+						Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
+					);
 			}
-			rb.velocity = movement * speed * 2;
 		} else {
 			float moveHorizontal = Input.GetAxis ("Horizontal");
 			float moveVertical = Input.GetAxis ("Vertical");
@@ -67,16 +89,15 @@ public class PlayerController : MonoBehaviour {
 			} else {
 				movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 			}
+
 			rb.velocity = movement * speed;
+			rb.position = new Vector3 
+				(
+					Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
+					0.0f, 
+					Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
+				);
 		}
-
-
-		rb.position = new Vector3 
-		(
-			Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
-			0.0f, 
-			Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
-		);
 
 		rb.rotation = Quaternion.Euler (0.0f, 0.0f, rb.velocity.x * -tilt);
 	}
