@@ -16,12 +16,9 @@ public class PlayerController : MonoBehaviour {
 	public Boundary boundary;
 
 	public GameObject[] shots;
-	public GameObject[] shotspawns2;
-	public GameObject[] shotspawns3;
 	public GameObject cleaner;
+	public GameObject bolt;
 	public GameObject cleanerButton;
-
-	public Transform shotspawn1;
 	public float fireDelta = 0.5F;
 
 	private float nextFire = 0.5F;
@@ -59,6 +56,19 @@ public class PlayerController : MonoBehaviour {
 					movement.x = touch.deltaPosition.x;
 					movement.z = touch.deltaPosition.y;
 					rb.velocity = movement;
+					rb.position = new Vector3 
+						(
+							Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
+							0.0f, 
+							Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
+						);
+				} else {
+					movement.x = Input.acceleration.x - dirInit.x;
+					if (GameMode != "ChildMode" && stickToXAxis == 0) {
+						movement.z = - (Input.acceleration.z - dirInit.z);
+					}
+
+					rb.velocity = movement * speed;
 					rb.position = new Vector3 
 						(
 							Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
@@ -105,27 +115,28 @@ public class PlayerController : MonoBehaviour {
 	public void FireAction () {
 		if (myTime > nextFire)
 		{
-			nextFire = myTime + fireDelta;
-			if (GameMode == "ChildMode") {
-				for (int i = 0; i < shotspawns3.Length; i++) {
-					Transform shotspawn = shotspawns3 [i].transform;
-					Instantiate (shots [1], shotspawn.position, shotspawn.rotation); 
-				}
-			} else {
-				int bulletCount = PlayerPrefs.GetInt ("BulletCount");
-				if (bulletCount <= 1) {
-					Instantiate (shots[0], shotspawn1.position, shotspawn1.rotation); 
-				} else if (bulletCount == 2) {
-					for (int i = 0; i < shotspawns2.Length; i++) {
-						Transform shotspawn = shotspawns2 [i].transform;
-						Instantiate (shots[0], shotspawn.position, shotspawn.rotation); 
-					}
-				} else if (bulletCount >= 3) {
-					for (int i = 0; i < shotspawns3.Length; i++) {
-						Transform shotspawn = shotspawns3 [i].transform;
-						Instantiate (shots[1], shotspawn.position, shotspawn.rotation); 
-					}
-				}
+			int bulletCount = PlayerPrefs.GetInt ("BulletCount");
+			nextFire = myTime + fireDelta / (bulletCount * 0.5f);
+			float xAxis = rb.position.x;
+			float yAxis = rb.position.y;
+			float zAxis = rb.position.z;
+			
+			// Increase the bullet speed
+			bolt.GetComponent<Mover>().speed = 15 + bulletCount * 3;
+
+			// First bullet position
+			if (bulletCount != 2) {
+				Instantiate (bolt, new Vector3 ( xAxis, yAxis, zAxis + 0.68f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
+			}
+
+			if (bulletCount >= 2) {
+				Instantiate (bolt, new Vector3 ( xAxis - 0.155f, yAxis + 0.0f, zAxis + 0.215f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
+				Instantiate (bolt, new Vector3 ( xAxis + 0.155f, yAxis + 0.0f, zAxis + 0.215f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
+			}
+
+			if (bulletCount >= 3) {
+				Instantiate (bolt, new Vector3 ( xAxis - 0.35f, yAxis + 0.0f, zAxis + 0.0f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
+				Instantiate (bolt, new Vector3 ( xAxis + 0.35f, yAxis + 0.0f, zAxis + 0.0f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
 			}
 
 			nextFire = nextFire - myTime;
@@ -137,8 +148,8 @@ public class PlayerController : MonoBehaviour {
 
 	public void FireCleaner () {
 		Vector3 cVector = Vector3.zero;
-		cVector.z = shotspawn1.position.z;
-		Instantiate (cleaner, cVector, shotspawn1.rotation); 
+		cVector.z = rb.position.z + 0.68f;
+		Instantiate (cleaner, cVector, rb.rotation); 
 		cleanerButton.SetActive (false);
 	}
 }

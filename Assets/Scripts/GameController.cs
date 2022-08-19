@@ -108,7 +108,7 @@ public class GameController : MonoBehaviour {
 			for (int i = 0; i < totalCount; i++) {
 				if (gameOver) break;
 
-				if (activateBulletActivator && bulletCount < 3 && upgradeBullet == Random.Range (0, 10)) {	
+				if (activateBulletActivator && bulletCount < 6 && upgradeBullet == Random.Range (0, 10)) {	
 					if (score > bulletCount * activateBullet) {
 						ObjectActivator (bulletActivator);
 						activateBulletActivator = false;
