@@ -21,6 +21,7 @@ public class GameController : MonoBehaviour {
 	public float startWait;
 	public float waveWait;
 	public int activateBullet = 100;
+	public int maxBulletCount = 5;
 	public Text scoreText; 
 	public Text yourScoreText; 
 	public Text highestScoreText;
@@ -108,7 +109,7 @@ public class GameController : MonoBehaviour {
 			for (int i = 0; i < totalCount; i++) {
 				if (gameOver) break;
 
-				if (activateBulletActivator && bulletCount < 6 && upgradeBullet == Random.Range (0, 10)) {	
+				if (activateBulletActivator && bulletCount < maxBulletCount && upgradeBullet == Random.Range (0, 20)) {	
 					if (score > bulletCount * activateBullet) {
 						ObjectActivator (bulletActivator);
 						activateBulletActivator = false;

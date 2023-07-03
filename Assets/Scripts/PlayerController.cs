@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject[] shots;
 	public GameObject cleaner;
 	public GameObject bolt;
+	public GameObject bolt2;
 	public GameObject cleanerButton;
 	public float fireDelta = 0.5F;
 
@@ -55,7 +56,7 @@ public class PlayerController : MonoBehaviour {
 				if (touch.phase == TouchPhase.Moved) {
 					movement.x = touch.deltaPosition.x;
 					movement.z = touch.deltaPosition.y;
-					rb.velocity = movement;
+					rb.velocity = movement * 0.75f;
 					rb.position = new Vector3 
 						(
 							Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
@@ -116,27 +117,28 @@ public class PlayerController : MonoBehaviour {
 		if (myTime > nextFire)
 		{
 			int bulletCount = PlayerPrefs.GetInt ("BulletCount");
-			nextFire = myTime + fireDelta / (bulletCount * 0.5f);
+			nextFire = myTime + fireDelta - (bulletCount * 0.005f);
 			float xAxis = rb.position.x;
 			float yAxis = rb.position.y;
 			float zAxis = rb.position.z;
 			
 			// Increase the bullet speed
-			bolt.GetComponent<Mover>().speed = 15 + bulletCount * 3;
+			bolt.GetComponent<Mover>().speed = 15 + bulletCount * 2;
 
 			// First bullet position
-			if (bulletCount != 2) {
+			if (GameMode == "ChildMode" || bulletCount != 2) {
 				Instantiate (bolt, new Vector3 ( xAxis, yAxis, zAxis + 0.68f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
 			}
 
-			if (bulletCount >= 2) {
+			if (GameMode == "ChildMode" || bulletCount >= 2) {
 				Instantiate (bolt, new Vector3 ( xAxis - 0.155f, yAxis + 0.0f, zAxis + 0.215f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
 				Instantiate (bolt, new Vector3 ( xAxis + 0.155f, yAxis + 0.0f, zAxis + 0.215f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
 			}
 
-			if (bulletCount >= 3) {
-				Instantiate (bolt, new Vector3 ( xAxis - 0.35f, yAxis + 0.0f, zAxis + 0.0f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
-				Instantiate (bolt, new Vector3 ( xAxis + 0.35f, yAxis + 0.0f, zAxis + 0.0f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
+			if (GameMode == "ChildMode" || bulletCount >= 3) {
+				bolt2.GetComponent<Mover>().speed = 12 + (bulletCount - 3) * 1;
+				Instantiate (bolt2, new Vector3 ( xAxis - 0.5f, yAxis + 0.0f, zAxis - 0.45f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
+				Instantiate (bolt2, new Vector3 ( xAxis + 0.5f, yAxis + 0.0f, zAxis - 0.45f ), Quaternion.Euler(new Vector3 ( 0.0f, 0.0f, 0.0f )));
 			}
 
 			nextFire = nextFire - myTime;
